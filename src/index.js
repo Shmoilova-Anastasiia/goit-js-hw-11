@@ -6,16 +6,16 @@ import { PixabayAPI } from './js/PixabayApi';
 
 
 const refs = {
-    form: document.querySelector('.search-form'),
-    gallery: document.querySelector('.gallery'),
-    btnLoad: document.querySelector('.gallery_btn-load'),
-    input: document.querySelector('input'),
+  form: document.querySelector('.search-form'),
+  gallery: document.querySelector('.gallery'),
+  btnLoad: document.querySelector('.gallery_btn-load'),
+  input: document.querySelector('input'),
 };
 
 const LightboxGallery = new SimpleLightbox('.gallery a', {
-    captions: true,
-    captionsData: 'alt',
-    captionDelay: 250,
+  captions: true,
+  captionsData: 'alt',
+  captionDelay: 250,
 });
 
 refs.btnLoad.classList.add('is-hidden');
@@ -45,10 +45,9 @@ function onSearch(event) {
     Notify.warning('Please, fill the main field');
     return;
   }
-
   isShown = 0;
   fetchGallery();
-  onRenderGallery(hits);
+  // onRenderGallery();
 }
 
 function onLoadMore() {
@@ -68,24 +67,26 @@ async function fetchGallery() {
     );
     refs.btnLoad.classList.add('is-hidden');
     return;
+  } 
+  if (pixabay.page===1){
+    Notify.success(`Hooray! We found ${total} images !!!`);
   }
 
   onRenderGallery(hits);
-  isShown += hits.length;
+  // isShown += hits.length;
 
   if (isShown < total) {
-    Notify.success(`Hooray! We found ${total} images !!!`);
     refs.btnLoad.classList.remove('is-hidden');
   }
 
-  if (isShown >= total) {
+  if (isShown%total <= 1) {
     Notify.info("We're sorry, but you've reached the end of search results.");
+    refs.btnLoad.classList.add('is-hidden');
   }
 }
 
 function onRenderGallery(elements) {
-  const markup = elements
-    .map(
+  const markup = elements.map(
       ({
         webformatURL,
         largeImageURL,
